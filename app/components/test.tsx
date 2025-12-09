@@ -1,10 +1,8 @@
 'use client';
-import { useEffect } from 'react';
-import { clientAxios } from '@/lib/axios/client';
+
+import { useUser } from '@/hooks/useAuth';
 
 export default function Test() {
-  useEffect(() => {
-    clientAxios.get('/channels');
-  }, []);
-  return <div>dd</div>;
+  const user = useUser();
+  return <div className={'w-20'}>{JSON.stringify(user)}</div>;
 }

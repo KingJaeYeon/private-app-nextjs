@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import ModalRenderer from '@/components/modal-renderer';
 
 type Props = {
   children: React.ReactNode[] | React.ReactNode;
@@ -46,6 +47,7 @@ export default function SystemProvider({ children }: Props) {
         disableTransitionOnChange
       >
         {children}
+        <ModalRenderer />
         <ReactQueryDevtools initialIsOpen={false} />
       </ThemeProvider>
     </QueryClientProvider>

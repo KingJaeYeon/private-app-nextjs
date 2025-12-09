@@ -3,7 +3,20 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import { RetryRequestConfig, ServerErrorResponse } from '@/lib/axios/interface';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-
+/**
+ * @example
+ *  // 방법 1: 서버용 Axios (캐싱 없음)
+ *   const axios = await createServerAxios();
+ *   const { data: products1 } = await axios.get('/products');
+ *
+ *   // 방법 2: Next.js fetch 캐싱 활용 (권장)
+ *   const products2 = await fetchWithCache('/products', {
+ *     next: {
+ *       revalidate: 60, // 60초 캐싱
+ *       tags: ['products'],
+ *     },
+ *   });
+ */
 export const createServerAxios = async (): Promise<AxiosInstance> => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('access_token')?.value;
