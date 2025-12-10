@@ -13,3 +13,9 @@ export interface ServerErrorResponse {
 export type RetryRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
 };
+
+export interface SuccessResponse<T> {
+  success: true;
+  data: T;
+  timestamp: string;
+}
