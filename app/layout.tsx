@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import SystemProvider from '@/components/system-provider';
-import { ThemeProvider } from '@/components/theme-provider';
+import Test from '@/app/components/test';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,7 +31,16 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SystemProvider>{children}</SystemProvider>
+        <SystemProvider>
+          <div className="flex min-h-svh w-full flex-col justify-center">
+            <div className="scrollNone relative flex flex-1 flex-col gap-4 overflow-auto">
+              <div className={'absolute h-full w-full p-4 pt-0'}>
+                <Test />
+                {children}
+              </div>
+            </div>
+          </div>
+        </SystemProvider>
         <SpeedInsights />
       </body>
     </html>
