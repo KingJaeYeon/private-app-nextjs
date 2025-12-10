@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { clientAxios } from '@/lib/axios/client';
 import { useRouter } from 'next/navigation';
 import { useModalStore } from '@/store/modalStore';
+import { SuccessResponse } from '@/lib/axios/interface';
 
 interface SignInDto {
   identifier: string;
@@ -11,7 +12,11 @@ interface SignInDto {
 interface User {
   id: string;
   email: string;
+  emailVerified: Date;
   username: string;
+  bio: string;
+  profileIcon: string;
+  createdAt: Date;
 }
 
 export const useAuth = () => {
@@ -58,8 +63,8 @@ export const useUser = () => {
   return useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const { data } = await clientAxios.get<User>('/users/me');
-      return data;
+      const { data } = await clientAxios.get('/users/me');
+      return data.data as SuccessResponse<User>;
     },
     staleTime: 5 * 60 * 1000, // 5분
     retry: false, // 401 에러시 재시도 안함
