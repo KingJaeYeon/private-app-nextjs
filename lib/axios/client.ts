@@ -61,18 +61,17 @@ clientAxios.interceptors.response.use(
 
     const errorCode = data.code;
 
+    // Refresh Token 만료 or 없음 → 로그인 페이지
     if (errorCode === 'AUTH-003') {
-      window.location.href = '/login';
+      console.log('refresh expired');
       return Promise.reject(error);
     }
 
-    // 이미 재시도한 요청이면 에러 반환
-    // 토큰 재발급 후에도 401이 발생하는 경우 (서버 이슈 or 토큰 갱신 실패)
+    // 이미 재시도한 요청 → 로그인 페이지
     if (originalRequest._retry) {
-      console.error(
-        'Token refresh succeeded but still got 401 - redirecting to login',
-      );
-      window.location.href = '/login';
+      console.log('retry');
+      isRefreshing = false;
+      failedQueue = [];
       return Promise.reject(error);
     }
 
@@ -98,7 +97,7 @@ clientAxios.interceptors.response.use(
           validateStatus: (status) => status < 500,
         },
       );
-
+      console.log(refreshResponse.status, 'refresh response');
       // 큐에 대기 중인 요청들 처리
       processQueue(null);
 
@@ -106,7 +105,6 @@ clientAxios.interceptors.response.use(
       return clientAxios(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError as Error);
-      window.location.href = '/login';
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
