@@ -1,8 +1,15 @@
 'use client';
 
-import { useUser } from '@/hooks/useAuth';
+import { useAuth, useUser } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 
 export default function Test() {
   const user = useUser();
-  return <div className={'w-20'}>{JSON.stringify(user)}</div>;
+  const { logout } = useAuth();
+  return (
+    <div className={'w-full'}>
+      {JSON.stringify(user.data)}
+      <Button onClick={() => logout.mutate()}>logout</Button>
+    </div>
+  );
 }

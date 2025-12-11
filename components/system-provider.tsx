@@ -53,11 +53,3 @@ export default function SystemProvider({ children }: Props) {
     </QueryClientProvider>
   );
 }
-//const { data: products, isLoading, error } = useQuery({
-//     queryKey: ['products'],
-//     queryFn: async () => {
-//       const { data } = await clientAxios.get('/products');
-//       return data;
-//     },
-//     staleTime: 60 * 1000, // 1분
-//   });
