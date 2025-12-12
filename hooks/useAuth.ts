@@ -1,22 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { clientAxios } from '@/lib/axios/client';
 import { useRouter } from 'next/navigation';
-import { useModalStore } from '@/store/modalStore';
-import { SuccessResponse } from '@/lib/axios/interface';
+import { useModalStore } from '@/store/modal.store';
+import { useAuthStore } from '@/store/auth.store';
+import { useEffect } from 'react';
 
 interface SignInDto {
   identifier: string;
   password: string;
-}
-
-interface User {
-  id: string;
-  email: string;
-  emailVerified: Date;
-  username: string;
-  bio: string;
-  profileIcon: string;
-  createdAt: Date;
 }
 
 export const useAuth = () => {
@@ -31,7 +22,6 @@ export const useAuth = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/');
     },
     onError: (error: any) => {
@@ -58,15 +48,15 @@ export const useAuth = () => {
   };
 };
 
-// 사용자 정보 조회 query 예시
-export const useUser = () => {
-  return useQuery({
-    queryKey: ['user'],
-    queryFn: async () => {
-      const { data } = await clientAxios.get('/users/me');
-      return data.data as SuccessResponse<User>;
-    },
-    staleTime: 5 * 60 * 1000, // 5분
-    retry: false, // 401 에러시 재시도 안함
-  });
-};
+export function useRequireAuth(redirectTo = '/login') {
+  const { isAuthenticated, user } = useAuthStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push(redirectTo);
+    }
+  }, [isAuthenticated, redirectTo, router]);
+
+  return { isAuthenticated, user };
+}

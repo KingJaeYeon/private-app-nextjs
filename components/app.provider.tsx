@@ -1,22 +1,24 @@
 'use client';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/components/theme.provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ModalRenderer from '@/components/modal-renderer';
+import { User } from '@/lib/auth';
+import { useAuthStore } from '@/store/auth.store';
 
 type Props = {
   children: React.ReactNode[] | React.ReactNode;
+  user: User | null;
 };
 
-export default function SystemProvider({ children }: Props) {
+export default function AppProvider({ children, user }: Props) {
   const queryClient = useMemo(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000, // 1분
-            refetchOnWindowFocus: true,
             refetchOnReconnect: true,
             retry: (failureCount, error: any) => {
               if (error?.response?.status === 401) {
@@ -38,6 +40,12 @@ export default function SystemProvider({ children }: Props) {
     [],
   );
 
+  const { setUser } = useAuthStore();
+
+  useEffect(() => {
+    setUser(user);
+  }, [user, setUser]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
@@ -53,3 +61,11 @@ export default function SystemProvider({ children }: Props) {
     </QueryClientProvider>
   );
 }
+//const { data: products, isLoading, error } = useQuery({
+//     queryKey: ['products'],
+//     queryFn: async () => {
+//       const { data } = await clientAxios.get('/products');
+//       return data;
+//     },
+//     staleTime: 60 * 1000, // 1분
+//   });

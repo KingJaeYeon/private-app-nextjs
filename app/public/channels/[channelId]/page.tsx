@@ -1,5 +1,3 @@
-import { fetchWithCache } from '@/lib/axios/fetch-wrapper';
-
 type ChannelBaseResponseDto = {
   id: number;
   channelId: string;
@@ -18,20 +16,24 @@ type ChannelBaseResponseDto = {
   createdAt: Date;
   updatedAt: Date;
 };
-
+export const revalidate = 0;
 export default async function Page({
   params,
 }: {
   params: Promise<{ channelId: string }>;
 }) {
   const { channelId } = await params;
-  const res = await fetchWithCache(`/channels/${channelId}`, {
-    next: {
-      revalidate: 0, // 60초 캐싱
-      tags: ['channels'],
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/channels/${channelId}`,
+    {
+      next: {
+        revalidate: 0, // 60초 캐싱
+        tags: ['channels'],
+      },
     },
-  });
-  const data = res?.data;
+  );
+  const json = await res?.json();
+  const data: ChannelBaseResponseDto = json.data;
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">

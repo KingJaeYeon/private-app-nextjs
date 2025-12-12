@@ -7,7 +7,8 @@ import axios, {
 } from 'axios';
 import { RetryRequestConfig, ServerErrorResponse } from '@/lib/axios/interface';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3500';
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3500';
 
 // 토큰 재발급 상태 관리
 let isRefreshing = false;

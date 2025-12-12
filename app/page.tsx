@@ -1,4 +1,3 @@
-import { fetchWithCache } from '@/lib/axios/fetch-wrapper';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,8 +22,8 @@ type ChannelBaseResponseDto = {
 };
 
 export default async function Home() {
-  const res = await fetchWithCache<ChannelBaseResponseDto[]>(
-    '/public/channels',
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/public/channels`,
     {
       next: {
         revalidate: 60,
@@ -32,7 +31,9 @@ export default async function Home() {
       },
     },
   );
-  const data = res.data;
+  const json = await res.json();
+  const data: ChannelBaseResponseDto[] = json.data;
+
   return (
     <div className={'flex flex-1 justify-center'}>
       <div className={'w-full max-w-[1200px]'}>
