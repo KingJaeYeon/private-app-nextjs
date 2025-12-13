@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import AppProvider from '@/components/app.provider';
+import AppProvider from '@/components/providers/app-provider';
 import { getServerUser } from '@/lib/auth';
+import { GlobalHeader } from '@/components/global-header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,6 +35,7 @@ export default async function RootLayout({
       >
         <AppProvider user={user}>
           <div className="flex min-h-svh w-full flex-col justify-center">
+            <GlobalHeader />
             <div className="scrollNone relative flex flex-1 flex-col gap-4 overflow-auto">
               <div className={'absolute h-full w-full p-4 pt-0'}>
                 {children}

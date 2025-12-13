@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { clientAxios } from '@/lib/axios/client';
 import { useRouter } from 'next/navigation';
-import { useModalStore } from '@/store/modal.store';
-import { useAuthStore } from '@/store/auth.store';
+import { useModalStore } from '@/store/modal-store';
+import { useAuthStore } from '@/store/auth-store';
 import { useEffect } from 'react';
 
 interface SignInDto {

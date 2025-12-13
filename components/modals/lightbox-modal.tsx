@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { ILightboxModal } from '@/components/modals/interface';
 
-export default function LightboxModal({ onClose, data }: ILightboxModal) {
+export function LightboxModal({ onClose, data }: ILightboxModal) {
   const { imgUrl } = data;
 
   useEffect(() => {

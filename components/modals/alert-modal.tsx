@@ -15,7 +15,7 @@ interface AlertModalProps {
   data?: string;
 }
 
-export default function AlertModal({ onClose, data }: AlertModalProps) {
+export function AlertModal({ onClose, data }: AlertModalProps) {
   const { theme } = useTheme();
   return (
     <AlertDialog open={true} onOpenChange={onClose}>

@@ -1,11 +1,11 @@
 'use client';
-import { ThemeProvider } from '@/components/theme.provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ModalRenderer from '@/components/modal-renderer';
 import { User } from '@/lib/auth';
-import { useAuthStore } from '@/store/auth.store';
+import { useAuthStore } from '@/store/auth-store';
 
 type Props = {
   children: React.ReactNode[] | React.ReactNode;

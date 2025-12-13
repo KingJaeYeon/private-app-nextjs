@@ -1,8 +1,8 @@
 'use client';
-import { useModalStore } from '@/store/modal.store';
-import { ViewModal } from '@/components/modals/ViewModal';
-import LightboxModal from '@/components/modals/LightboxModal';
-import AlertModal from '@/components/modals/AlertModal';
+import { useModalStore } from '@/store/modal-store';
+import { ViewModal } from '@/components/modals/view-modal';
+import { LightboxModal } from '@/components/modals/lightbox-modal';
+import { AlertModal } from '@/components/modals/alert-modal';
 import {
   IAlertModal,
   ILightboxModal,

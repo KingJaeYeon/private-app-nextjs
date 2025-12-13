@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/use-auth';
 
 export function LoginForm({
   className,

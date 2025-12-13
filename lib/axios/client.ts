@@ -90,14 +90,8 @@ clientAxios.interceptors.response.use(
 
     try {
       // /auth/refresh 엔드포인트 호출 (쿠키가 자동으로 전송됨)
-      const refreshResponse = await axios.post(
-        `${API_URL}/auth/refresh`,
-        {},
-        {
-          withCredentials: true,
-          validateStatus: (status) => status < 500,
-        },
-      );
+      console.log('refresh request');
+      const refreshResponse = await clientAxios.post(`/auth/refresh`);
       console.log(refreshResponse.status, 'refresh response');
       // 큐에 대기 중인 요청들 처리
       processQueue(null);
