@@ -37,9 +37,7 @@ export default async function RootLayout({
           <div className="flex min-h-svh w-full flex-col justify-center">
             <GlobalHeader />
             <div className="scrollNone relative flex flex-1 flex-col gap-4 overflow-auto">
-              <div className={'absolute h-full w-full p-4 pt-0'}>
-                {children}
-              </div>
+              <div className={'absolute h-full w-full p-4'}>{children}</div>
             </div>
           </div>
         </AppProvider>
