@@ -1,12 +1,12 @@
 import { create } from 'zustand';
-import { User } from '@/lib/auth';
+import { IPayload } from '@/lib/auth';
 
 interface AuthStore {
-  user: User | null;
+  user: IPayload | null;
   isAuthenticated: boolean;
-  setUser: (user: User | null) => void;
+  setUser: (user: IPayload | null) => void;
   clearUser: () => void;
-  initialize: (user: User | null) => void;
+  initialize: (user: IPayload | null) => void;
 }
 
 let initialized = false;

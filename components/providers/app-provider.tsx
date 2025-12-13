@@ -4,13 +4,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect, useLayoutEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ModalRenderer from '@/components/modal-renderer';
-import { User } from '@/lib/auth';
+import { IPayload } from '@/lib/auth';
 import { useAuthStore } from '@/store/auth-store';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 type Props = {
   children: React.ReactNode[] | React.ReactNode;
-  user: User | null;
+  user: IPayload | null;
 };
 
 export default function AppProvider({ children, user }: Props) {

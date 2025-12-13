@@ -1,12 +1,12 @@
 import { cookies } from 'next/headers';
 import { AUTH_COOKIE } from '@/constants/auth';
 
-export interface User {
+export interface IPayload {
   userId: string;
   exp?: number;
 }
 
-export async function getServerUser(): Promise<User | null> {
+export async function getServerUser(): Promise<IPayload | null> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(AUTH_COOKIE.ACCESS)?.value;

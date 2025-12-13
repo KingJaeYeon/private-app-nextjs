@@ -27,8 +27,8 @@ export function ThemeToggle() {
           size="icon-lg"
           onClick={() => setTheme((cur) => (cur === 'dark' ? 'light' : 'dark'))}
         >
-          <Sun className="absolute size-1 h-[1.5rem] w-[1.5rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-          <Moon className="size-1 h-[1.5rem] w-[1.5rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Sun className="absolute size-1 h-[1.7rem] w-[1.7rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          <Moon className="size-1 h-[1.7rem] w-[1.7rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
         </Button>
       </TooltipTrigger>
       <TooltipContent>

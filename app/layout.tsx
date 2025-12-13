@@ -4,7 +4,7 @@ import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import AppProvider from '@/components/providers/app-provider';
 import { getServerUser } from '@/lib/auth';
-import { GlobalHeader } from '@/components/global-header';
+import { GlobalHeader } from '@/components/header/global-header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

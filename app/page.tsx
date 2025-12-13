@@ -27,7 +27,7 @@ export default async function Home() {
     {
       next: {
         revalidate: 60,
-        tags: ['public-channels'],
+        tags: ['public-channel'],
       },
     },
   );
@@ -51,7 +51,7 @@ function ChannelCard({ channel }: { channel: ChannelBaseResponseDto }) {
   return (
     <Link
       href={{
-        pathname: `/public/channels/${channel.id}`,
+        pathname: `/channel/${channel.id}`,
       }}
     >
       <Card className="cursor-pointer transition-all hover:shadow-lg">

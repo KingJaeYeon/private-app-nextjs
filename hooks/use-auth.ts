@@ -14,14 +14,16 @@ export const useAuth = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { openModal } = useModalStore();
+  const { clearUser, setUser } = useAuthStore();
 
   // 로그인 mutation
   const signIn = useMutation({
     mutationFn: async (dto: SignInDto) => {
       const { data } = await clientAxios.post('/auth/sign-in', dto);
-      return data;
+      return data.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setUser(data);
       router.push('/');
     },
     onError: (error: any) => {
@@ -38,6 +40,7 @@ export const useAuth = () => {
     },
     onSuccess: () => {
       queryClient.clear();
+      clearUser();
       router.push('/login');
     },
   });
