@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
 
 export function LoginForm({
   className,
@@ -79,11 +80,15 @@ export function LoginForm({
                   variant="outline"
                   type="button"
                   isLoading={signIn.isPending}
+                  onClick={() =>
+                    (window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`)
+                  }
                 >
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account?{' '}
+                  <Link href="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
