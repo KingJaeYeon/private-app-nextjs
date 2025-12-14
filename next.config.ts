@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [new URL('https://yt3.ggpht.com/**')],
   },
-  experimental: {
-    globalNotFound: true,
-  },
   turbopack: {
     rules: {
       '*.svg': {
