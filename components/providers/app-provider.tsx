@@ -7,6 +7,7 @@ import ModalRenderer from '@/components/modal-renderer';
 import { IPayload } from '@/lib/auth';
 import { useAuthStore } from '@/store/auth-store';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/sonner';
 
 type Props = {
   children: React.ReactNode[] | React.ReactNode;
@@ -57,6 +58,7 @@ export default function AppProvider({ children, user }: Props) {
       >
         <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
         <ModalRenderer />
+        <Toaster />
         <ReactQueryDevtools initialIsOpen={false} />
       </ThemeProvider>
     </QueryClientProvider>

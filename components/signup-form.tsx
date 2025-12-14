@@ -1,146 +1,261 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import React, { useState } from 'react';
+import { FloatingOutlinedInput } from '@/components/ui/floating-outlined-Input';
 import { Button } from '@/components/ui/button';
+import { Google } from '@/assets/google';
+import { useMutation } from '@tanstack/react-query';
+import { clientAxios } from '@/lib/axios/client';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import Tip from '@/components/ui/tip';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
+import { useModalStore } from '@/store/modal-store';
+import Image from 'next/image';
+import DarkLogo from '@/public/logo-dark.png';
+import Logo from '@/public/logo.png';
+import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
+
+const signupSchema = z
+  .object({
+    email: z
+      .email({ message: '이메일 형식이 올바르지 않습니다.' })
+      .min(1, '이메일을 입력해주세요.'),
+    password: z.string().min(4, '비밀번호는 4자 이상이어야 합니다.'),
+    passwordConfirm: z.string().min(1, '비밀번호 확인을 입력해주세요.'),
+  })
+  .refine((v) => v.password === v.passwordConfirm, {
+    message: '비밀번호가 일치하지 않습니다.',
+    path: ['passwordConfirm'],
+  });
+
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
+  const form = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      passwordConfirm: '',
+    },
+    mode: 'onSubmit',
+  });
+  const { openModal } = useModalStore();
+
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState('');
-  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch(
-        'http://localhost:3001/auth/request-email-verification',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        },
+  const requestEmailVerification = useMutation({
+    mutationFn: async (dto: { email: string; password: string }) => {
+      const { data } = await clientAxios.post(
+        '/auth/request-email-verification',
+        dto,
       );
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message);
-      }
-
+      return data.data;
+    },
+    onSuccess: () => {
       setSent(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '오류가 발생했습니다');
-    } finally {
-      setLoading(false);
-    }
+    },
+    onError: (error: any) => {
+      const res = error.response.data;
+      form.setError('email', { type: 'value', message: res.message });
+    },
+  });
+
+  const onSubmit = (values: SignupFormValues) => {
+    // passwordConfirm은 서버에 보낼 필요 없음
+    requestEmailVerification.mutate({
+      email: values.email,
+      password: values.password,
+    });
   };
 
-  const handleResend = async () => {
-    setLoading(true);
-    setError('');
-
-    try {
-      await fetch('http://localhost:3001/auth/resend-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      alert('인증 메일이 재발송되었습니다');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '오류가 발생했습니다');
-    } finally {
-      setLoading(false);
-    }
-  };
   if (sent) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-          <div className="text-center">
-            <div className="mb-4 text-6xl">📧</div>
-            <h2 className="mb-4 text-2xl font-bold">이메일을 확인해주세요</h2>
-            <p className="mb-6 text-gray-600">
-              <strong>{email}</strong>로<br />
-              인증 메일을 발송했습니다.
-            </p>
-            <p className="mb-4 text-sm text-gray-500">
-              메일함을 확인하고 인증 링크를 클릭해주세요.
-            </p>
-            <button
-              onClick={handleResend}
-              disabled={loading}
-              className="text-sm text-blue-600 hover:text-blue-700"
-            >
-              메일을 받지 못하셨나요? 재발송
-            </button>
-          </div>
-        </div>
-      </div>
+      <SuccessSendEmail
+        email={form.getValues('email')}
+        password={form.getValues('password')}
+      />
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <h1 className="mb-8 text-center text-3xl font-bold">회원가입</h1>
+    <div className="w-full max-w-md rounded-lg p-8 shadow-lg">
+      <div
+        className={
+          'mb-8 flex flex-col justify-center gap-5 py-2 leading-none font-semibold'
+        }
+      >
+        <p className={'text-3xl'}>회원가입</p>
+        <p className={''}>아래 내용을 입력해주세요</p>
+      </div>
 
-        {error && (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 p-4">
-            <p className="text-sm text-red-800">{error}</p>
-          </div>
-        )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* email */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingOutlinedInput
+                    id="email"
+                    label="이메일"
+                    value={field.value}
+                    onChangeValue={field.onChange}
+                    isError={!!fieldState.error}
+                    required
+                    autoComplete="email"
+                    inputMode="email"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              이메일 주소
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="your@email.com"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          {/* password */}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingOutlinedInput
+                    id="password"
+                    label="비밀번호"
+                    value={field.value}
+                    onChangeValue={field.onChange}
+                    isError={!!fieldState.error}
+                    required
+                    type="password"
+                    autoComplete="new-password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <button
+          {/* passwordConfirm */}
+          <FormField
+            control={form.control}
+            name="passwordConfirm"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingOutlinedInput
+                    id="password_confirmation"
+                    label="비밀번호 확인"
+                    value={field.value}
+                    onChangeValue={field.onChange}
+                    isError={!!fieldState.error}
+                    required
+                    type="password"
+                    autoComplete="new-password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
             type="submit"
-            disabled={loading}
+            isLoading={requestEmailVerification.isPending}
             className="w-full rounded-lg bg-blue-600 py-4 font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400"
           >
-            {loading ? '발송 중...' : '인증 메일 받기'}
-          </button>
+            가입하기
+          </Button>
         </form>
+      </Form>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          이미 계정이 있으신가요?{' '}
-          <a href="/login" className="text-blue-600 hover:text-blue-700">
-            로그인
-          </a>
+      <div className="auth-divider mt-6 mb-2 flex items-center gap-4">
+        <div className="border-muted-foreground flex-1 border-t" />
+        <span className="text-muted-foreground text-sm whitespace-nowrap">
+          간편 회원가입
+        </span>
+        <div className="border-muted-foreground flex-1 border-t" />
+      </div>
+      <div className={'flex justify-center'}>
+        <div
+          onClick={() =>
+            (window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`)
+          }
+          className={
+            'bg-secondary mt-1 h-fit w-fit cursor-pointer rounded-full p-1 dark:bg-white'
+          }
+        >
+          <Google />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SuccessSendEmail({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const { theme } = useTheme();
+  const [error, setError] = React.useState('');
+
+  const resendVerification = useMutation({
+    mutationFn: async (dto: { email: string; password: string }) => {
+      // fetch로 localhost 박는 대신 clientAxios로 통일 (환경변수/프록시 설정에도 안전)
+      const { data } = await clientAxios.post(
+        '/auth/request-email-verification',
+        dto,
+      );
+      return data.data;
+    },
+    onSuccess: () => {
+      toast('인증 메일이 재발송되었습니다');
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ?? '재발송 중 오류가 발생했습니다.';
+      toast.error(message);
+    },
+  });
+  return (
+    <div className="w-full max-w-md rounded-lg p-8 shadow-lg">
+      <div className="text-center">
+        <div className={'mb-4 flex justify-center'}>
+          <Image
+            src={theme === 'dark' ? DarkLogo : Logo}
+            alt={'logo'}
+            height={200}
+          />
+        </div>
+        <p className="text-muted-foreground mb-6">
+          <strong>{email}</strong>로<br />
+          인증 메일을 발송했습니다.
         </p>
+        <p className="text-muted-foreground mb-4 text-sm">
+          메일함을 확인하고 인증 링크를 클릭해주세요.
+        </p>
+
+        <button
+          onClick={() => resendVerification.mutate({ email, password })}
+          disabled={resendVerification.isPending}
+          className="text-sm text-blue-600 hover:text-blue-700 disabled:opacity-60"
+        >
+          메일을 받지 못하셨나요? 재발송
+        </button>
+
+        {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
       </div>
     </div>
   );

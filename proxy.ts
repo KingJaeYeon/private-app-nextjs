@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AUTH_COOKIE } from '@/constants/auth';
 
 export function proxy(req: NextRequest) {
-  const refreshToken = req.cookies.get('refresh');
+  const accessToken = req.cookies.get(AUTH_COOKIE.ACCESS);
   const { pathname } = req.nextUrl;
-
-  if (refreshToken && (pathname === '/login' || pathname === '/register')) {
+  console.log(pathname);
+  if (accessToken && (pathname === '/signup' || pathname === '/verify-email')) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
   const isProtected = pathname.startsWith('/my');
-  if (!refreshToken && isProtected) {
+  if (!accessToken && isProtected) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
@@ -17,5 +18,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/my'],
+  matcher: ['/my', '/verify-email', '/signup'],
 };
