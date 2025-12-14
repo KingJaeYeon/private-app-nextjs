@@ -67,7 +67,7 @@ export function UserAvatarMenu() {
     retry: false, // 401은 재시도 안 함
   });
 
-  const { logout } = useAuth();
+  const { logout } = useAuth({});
 
   return (
     <DropdownMenu>

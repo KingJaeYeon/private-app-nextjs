@@ -1,9 +1,10 @@
 'use client';
 import { useAuthStore } from '@/store/auth-store';
 import Link from 'next/link';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import * as React from 'react';
 import { UserAvatarMenu } from '@/components/header/user-avatar-menu';
+import { useModalStore } from '@/store/modal-store';
 
 export function UserMenu() {
   const { isAuthenticated } = useAuthStore();
@@ -11,9 +12,10 @@ export function UserMenu() {
 }
 
 function LoginButton() {
+  const { openModal } = useModalStore();
   return (
-    <Link href={'/login'} className={buttonVariants({ variant: 'outline' })}>
+    <Button onClick={() => openModal('login', undefined)} variant={'outline'}>
       로그인
-    </Link>
+    </Button>
   );
 }

@@ -1,10 +1,10 @@
-import { LoginForm } from '@/components/login-form';
+import { SignupForm } from '@/components/signup-form';
 
-export default function Page() {
+export default function SignupPage() {
   return (
     <div className="flex h-full w-full flex-1 items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <LoginForm />
+        <SignupForm />
       </div>
     </div>
   );

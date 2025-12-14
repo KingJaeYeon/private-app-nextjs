@@ -10,10 +10,14 @@ interface SignInDto {
   password: string;
 }
 
-export const useAuth = () => {
+export function useAuth({
+  onErrorMessage,
+}: {
+  onErrorMessage?: (message: string) => void;
+}) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { openModal } = useModalStore();
+  const { closeModal } = useModalStore();
   const { clearUser, setUser } = useAuthStore();
 
   // 로그인 mutation
@@ -24,11 +28,12 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       setUser(data);
+      closeModal();
       router.push('/');
     },
     onError: (error: any) => {
       const res = error.response.data;
-      openModal('alert', res?.message);
+      onErrorMessage && onErrorMessage(res?.message);
     },
   });
 
@@ -41,7 +46,7 @@ export const useAuth = () => {
     onSuccess: () => {
       queryClient.clear();
       clearUser();
-      router.push('/login');
+      router.push('/');
     },
   });
 
@@ -49,7 +54,7 @@ export const useAuth = () => {
     signIn,
     logout,
   };
-};
+}
 
 export function useRequireAuth(redirectTo = '/login') {
   const { isAuthenticated, user } = useAuthStore();

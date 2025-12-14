@@ -9,13 +9,9 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import DarkLogo from '@/public/logo-dark.png';
 import Logo from '@/public/logo.png';
+import { IAlertModal } from '@/components/modals/interface';
 
-interface AlertModalProps {
-  onClose: () => void;
-  data?: string;
-}
-
-export function AlertModal({ onClose, data }: AlertModalProps) {
+export function AlertModal({ onClose, data }: IAlertModal) {
   const { theme } = useTheme();
   return (
     <AlertDialog open={true} onOpenChange={onClose}>

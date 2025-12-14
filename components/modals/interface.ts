@@ -2,6 +2,7 @@ export interface IModalKey {
   view: IViewModal;
   lightbox: ILightboxModal;
   alert: IAlertModal;
+  login: ILoginModal;
 }
 
 interface IModalBase {
@@ -21,6 +22,10 @@ export interface ILightboxModal extends IModalBase {
 
 export interface IAlertModal extends IModalBase {
   data?: string;
+}
+
+export interface ILoginModal extends IModalBase {
+  data?: undefined;
 }
 
 export type ModalType = keyof IModalKey;

@@ -9,6 +9,7 @@ import {
   IViewModal,
   ModalType,
 } from '@/components/modals/interface';
+import { LoginModal } from '@/components/modals/login-modal';
 
 export default function ModalRenderer() {
   const { type, isOpen, closeModal, data } = useModalStore();
@@ -28,6 +29,7 @@ export default function ModalRenderer() {
     alert: (
       <AlertModal onClose={closeModal} data={data as IAlertModal['data']} />
     ),
+    login: <LoginModal onClose={closeModal} />,
   };
 
   return modals ? modals[type] : null;
