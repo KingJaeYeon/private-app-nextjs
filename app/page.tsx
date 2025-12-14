@@ -49,11 +49,7 @@ export default async function Home() {
 
 function ChannelCard({ channel }: { channel: ChannelBaseResponseDto }) {
   return (
-    <Link
-      href={{
-        pathname: `/channel/${channel.id}`,
-      }}
-    >
+    <Link href={{ pathname: `/channel/${channel.id}` }}>
       <Card className="cursor-pointer transition-all hover:shadow-lg">
         <CardHeader className="flex flex-row items-center gap-4">
           <Image

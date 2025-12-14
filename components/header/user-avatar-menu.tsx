@@ -33,7 +33,7 @@ import {
   VideoIcon,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { Google } from '@/app/assets/google';
+import { Google } from '@/assets/google';
 import Logo from '@/public/logo.svg';
 import Link from 'next/link';
 
@@ -75,7 +75,13 @@ export function UserAvatarMenu() {
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer outline-2 outline-blue-600 hover:outline-4">
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage
+                src={
+                  data?.profileIcon
+                    ? data.profileIcon
+                    : 'https://github.com/shadcn.png'
+                }
+              />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
