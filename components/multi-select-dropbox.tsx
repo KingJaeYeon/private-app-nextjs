@@ -30,6 +30,7 @@ export type MultiSelectDropBoxProps = {
   popoverClassName?: string;
   maxHeight?: number; // px for the list, default 280
   syncWithUrl?: { key: string };
+  prefix?: string;
 };
 
 export default function MultiSelectDropBox({
@@ -42,6 +43,7 @@ export default function MultiSelectDropBox({
   popoverClassName,
   maxHeight = 280,
   syncWithUrl,
+  prefix,
 }: MultiSelectDropBoxProps) {
   const [open, setOpen] = useState(false);
   const searchParams = useSearchParams();
@@ -101,13 +103,14 @@ export default function MultiSelectDropBox({
             {selectedOptions.length === 1 ? (
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="truncate text-sm">
-                  {selectedOptions[0]?.label}
+                  {prefix ? `${prefix}:` : null} {selectedOptions[0]?.label}
                 </span>
               </div>
             ) : selectedOptions.length > 1 ? (
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="truncate text-sm">
-                  {selectedOptions[0]?.label} 외 {selected.length - 1}개
+                  {prefix ? `${prefix}:` : null} {selectedOptions[0]?.label} 외{' '}
+                  {selected.length - 1}개
                 </span>
               </div>
             ) : (

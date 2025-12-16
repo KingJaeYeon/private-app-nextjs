@@ -63,7 +63,7 @@ export function SearchChannelInput({ query }: { query: SearchQuery }) {
   }, [data.length, isKeyword, setOpen]);
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperRef} className={'w-[350px]'}>
       <Popover
         open={open}
         onOpenChange={(newOpen) => {
