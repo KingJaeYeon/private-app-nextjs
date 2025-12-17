@@ -37,3 +37,7 @@ export const logoutAction = async () => {
   const { data } = await clientAxios.post('/auth/logout');
   return data;
 };
+
+export const googleSignInAction = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+};

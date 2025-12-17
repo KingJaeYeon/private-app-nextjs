@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { IconClose } from '@/assets/Icon-close';
+import { googleSignInAction } from '@/services/auth.service';
 
 export function LoginModal({ onClose }: ILoginModal) {
   const { signIn } = useAuth({
@@ -84,9 +85,7 @@ export function LoginModal({ onClose }: ILoginModal) {
                   variant="outline"
                   type="button"
                   isLoading={signIn.isPending}
-                  onClick={() =>
-                    (window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`)
-                  }
+                  onClick={googleSignInAction}
                 >
                   Login with Google
                 </Button>

@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { SearchQuery } from '@/app/search/page';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
 import {
@@ -14,8 +13,9 @@ import DarkLogo from '@/public/logo-dark.png';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { Spinner } from '@/components/ui/spinner';
+import { ChannelSearchParams } from '@/services/channel.service';
 
-export function SearchChannelInput({ query }: { query: SearchQuery }) {
+export function SearchChannelInput({ query }: { query: ChannelSearchParams }) {
   const {
     input,
     setInput,
@@ -63,7 +63,7 @@ export function SearchChannelInput({ query }: { query: SearchQuery }) {
   }, [data.length, isKeyword, setOpen]);
 
   return (
-    <div ref={wrapperRef} className={'w-[350px]'}>
+    <div ref={wrapperRef} className={'w-full sm:w-[350px]'}>
       <Popover
         open={open}
         onOpenChange={(newOpen) => {
@@ -74,7 +74,7 @@ export function SearchChannelInput({ query }: { query: SearchQuery }) {
         }}
       >
         <PopoverTrigger asChild>
-          <div className="relative flex gap-2">
+          <div className="relative flex items-center gap-2">
             <input
               ref={inputRef}
               value={input}
@@ -82,14 +82,14 @@ export function SearchChannelInput({ query }: { query: SearchQuery }) {
               onKeyDown={(e) => e.key === 'Enter' && handleSearch(query)}
               placeholder="URL 또는 키워드 입력"
               className={cn(
-                'h-10 flex-1 rounded-lg border border-gray-300 py-3 pr-20 pl-4',
+                'y-3 bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-10 flex-1 rounded-lg border pr-20 pl-4 shadow-xs',
                 'transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500',
               )}
             />
             <button
               type="button"
               onClick={() => handleSearch(query)}
-              className="absolute top-0.5 right-2 rounded-lg bg-blue-600 px-3 py-1 font-semibold text-white transition-colors hover:bg-blue-700"
+              className="absolute right-2 rounded-lg bg-blue-600 px-3 py-1 font-semibold text-white transition-colors hover:bg-blue-700"
             >
               검색
             </button>

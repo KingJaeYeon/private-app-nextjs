@@ -1,37 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-
-type ChannelBaseResponseDto = {
-  id: number;
-  channelId: string;
-  name: string;
-  handle: string | null;
-  description: string | null;
-  link: string;
-  thumbnailUrl: string | null;
-  regionCode: string | null;
-  defaultLanguage: string | null;
-  videoCount: number;
-  viewCount: number;
-  subscriberCount: number;
-  publishedAt: Date;
-  lastVideoUploadedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import {
+  ChannelBaseResponseDto,
+  fetchPublicChannels,
+} from '@/services/channel.service';
 
 export default async function Home() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/public/channels`,
-    {
-      next: {
-        revalidate: 60,
-        tags: ['public-channel'],
-      },
-    },
-  );
-  const json = await res.json();
+  const json = await fetchPublicChannels();
   const data: ChannelBaseResponseDto[] = json.data;
 
   return (

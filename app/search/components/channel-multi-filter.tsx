@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { SearchQuery } from '@/app/search/page';
 import MultiSelectDropBox from '@/components/multi-select-dropbox';
+import { ChannelSearchParams } from '@/services/channel.service';
 
 const COUNTRIES = [
   { value: 'KR', label: '한국' },
@@ -25,7 +25,7 @@ const VIEW_COUNT = [
   { value: '1M_over', label: '100만~' },
 ];
 
-export function ChannelMultiFilter({ query }: { query: SearchQuery }) {
+export function ChannelMultiFilter({ query }: { query: ChannelSearchParams }) {
   const [countries, setCountries] = useState<string[]>(() =>
     query.country ? query.country.split(',') : [],
   );
@@ -37,7 +37,7 @@ export function ChannelMultiFilter({ query }: { query: SearchQuery }) {
   );
 
   return (
-    <div className="flex gap-2">
+    <div className="scrollNone flex gap-2 overflow-x-auto">
       <MultiSelectDropBox
         selected={countries}
         options={COUNTRIES}
