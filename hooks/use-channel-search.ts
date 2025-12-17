@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { clientAxios } from '@/lib/axios/client';
 import useDebounce from '@/hooks/use-debounce';
+import { fetchChannelSuggest } from '@/services/channel.service';
 
 export function useChannelSearch(initialQuery?: string) {
   const router = useRouter();
@@ -19,12 +19,7 @@ export function useChannelSearch(initialQuery?: string) {
   // 자동완성 쿼리
   const { data, isPending } = useQuery({
     queryKey: ['channels-suggest', debouncedInput],
-    queryFn: async () => {
-      const response = await clientAxios.get(
-        `/channels/suggest?q=${debouncedInput}`,
-      );
-      return response.data;
-    },
+    queryFn: async () => fetchChannelSuggest(debouncedInput),
     enabled: isKeyword,
   });
 

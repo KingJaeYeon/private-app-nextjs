@@ -1,14 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { clientAxios } from '@/lib/axios/client';
 import { useRouter } from 'next/navigation';
 import { useModalStore } from '@/store/modal-store';
 import { useAuthStore } from '@/store/auth-store';
 import { useEffect } from 'react';
-
-interface SignInDto {
-  identifier: string;
-  password: string;
-}
+import { logoutAction, signInAction } from '@/services/auth.service';
 
 export function useAuth({
   onErrorMessage,
@@ -22,10 +17,7 @@ export function useAuth({
 
   // 로그인 mutation
   const signIn = useMutation({
-    mutationFn: async (dto: SignInDto) => {
-      const { data } = await clientAxios.post('/auth/sign-in', dto);
-      return data.data;
-    },
+    mutationFn: signInAction,
     onSuccess: (data) => {
       setUser(data);
       closeModal();
@@ -39,10 +31,7 @@ export function useAuth({
 
   // 로그아웃 mutation
   const logout = useMutation({
-    mutationFn: async () => {
-      const { data } = await clientAxios.post('/auth/logout');
-      return data;
-    },
+    mutationFn: logoutAction,
     onSuccess: () => {
       queryClient.clear();
       clearUser();

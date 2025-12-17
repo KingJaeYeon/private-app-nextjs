@@ -1,3 +1,5 @@
+import { fetchChannel } from '@/services/channel.service';
+
 type ChannelBaseResponseDto = {
   id: number;
   channelId: string;
@@ -22,12 +24,7 @@ export default async function Page({
   params: Promise<{ channelId: string }>;
 }) {
   const { channelId } = await params;
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/public/channels/${channelId}`,
-    { next: { revalidate: 0, tags: ['channels'] } },
-  );
-
-  const json = await res?.json();
+  const json = await fetchChannel(channelId);
   const data: ChannelBaseResponseDto = json.data;
 
   return (

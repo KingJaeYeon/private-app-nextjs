@@ -5,7 +5,6 @@ import { FloatingOutlinedInput } from '@/components/ui/floating-outlined-Input';
 import { Button } from '@/components/ui/button';
 import { Google } from '@/assets/google';
 import { useMutation } from '@tanstack/react-query';
-import { clientAxios } from '@/lib/axios/client';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,12 +15,12 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { useModalStore } from '@/store/modal-store';
 import Image from 'next/image';
 import DarkLogo from '@/public/logo-dark.png';
 import Logo from '@/public/logo.png';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
+import { requestEmailVerification } from '@/services/auth.service';
 
 const signupSchema = z
   .object({
@@ -48,21 +47,12 @@ export function SignupForm() {
     },
     mode: 'onSubmit',
   });
-  const { openModal } = useModalStore();
 
   const [sent, setSent] = useState(false);
 
-  const requestEmailVerification = useMutation({
-    mutationFn: async (dto: { email: string; password: string }) => {
-      const { data } = await clientAxios.post(
-        '/auth/request-email-verification',
-        dto,
-      );
-      return data.data;
-    },
-    onSuccess: () => {
-      setSent(true);
-    },
+  const { mutate, isPending } = useMutation({
+    mutationFn: requestEmailVerification,
+    onSuccess: () => setSent(true),
     onError: (error: any) => {
       const res = error.response.data;
       form.setError('email', { type: 'value', message: res.message });
@@ -71,7 +61,7 @@ export function SignupForm() {
 
   const onSubmit = (values: SignupFormValues) => {
     // passwordConfirm은 서버에 보낼 필요 없음
-    requestEmailVerification.mutate({
+    mutate({
       email: values.email,
       password: values.password,
     });
@@ -170,7 +160,7 @@ export function SignupForm() {
 
           <Button
             type="submit"
-            isLoading={requestEmailVerification.isPending}
+            isLoading={isPending}
             className="w-full rounded-lg bg-blue-600 py-4 font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400"
           >
             가입하기
@@ -209,20 +199,10 @@ function SuccessSendEmail({
   password: string;
 }) {
   const { theme } = useTheme();
-  const [error, setError] = React.useState('');
 
-  const resendVerification = useMutation({
-    mutationFn: async (dto: { email: string; password: string }) => {
-      // fetch로 localhost 박는 대신 clientAxios로 통일 (환경변수/프록시 설정에도 안전)
-      const { data } = await clientAxios.post(
-        '/auth/request-email-verification',
-        dto,
-      );
-      return data.data;
-    },
-    onSuccess: () => {
-      toast('인증 메일이 재발송되었습니다');
-    },
+  const { mutate, isPending } = useMutation({
+    mutationFn: requestEmailVerification,
+    onSuccess: () => toast('인증 메일이 재발송되었습니다'),
     onError: (error: any) => {
       const message =
         error?.response?.data?.message ?? '재발송 중 오류가 발생했습니다.';
@@ -248,14 +228,12 @@ function SuccessSendEmail({
         </p>
 
         <button
-          onClick={() => resendVerification.mutate({ email, password })}
-          disabled={resendVerification.isPending}
+          onClick={() => mutate({ email, password })}
+          disabled={isPending}
           className="text-sm text-blue-600 hover:text-blue-700 disabled:opacity-60"
         >
           메일을 받지 못하셨나요? 재발송
         </button>
-
-        {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
       </div>
     </div>
   );

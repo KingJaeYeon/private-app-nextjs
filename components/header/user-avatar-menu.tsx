@@ -1,18 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { clientAxios } from '@/lib/axios/client';
-import { SuccessResponse } from '@/lib/axios/interface';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -24,7 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import * as React from 'react';
 import {
   EarthIcon,
-  EarthLock,
   LogOut,
   LucideIcon,
   ScrollText,
@@ -36,17 +28,8 @@ import { useAuth } from '@/hooks/use-auth';
 import { Google } from '@/assets/google';
 import Logo from '@/public/logo.svg';
 import Link from 'next/link';
+import { fetchCurrentUser } from '@/services/user.service';
 
-interface IUser {
-  id: number;
-  email: string;
-  emailVerified: boolean;
-  username: string;
-  bio: string;
-  profileIcon: string;
-  createdAt: string;
-  oAuthType: string;
-}
 const navigates = [
   { label: '채널 찾기', href: '/search', icon: SearchIcon },
   { label: '영상 검색', href: '/me/search/video', icon: VideoIcon },
@@ -58,11 +41,7 @@ const navigates = [
 export function UserAvatarMenu() {
   const { data } = useQuery({
     queryKey: ['user', 'me'],
-    queryFn: async () => {
-      const { data } =
-        await clientAxios.get<SuccessResponse<IUser>>('/users/me');
-      return data.data;
-    },
+    queryFn: fetchCurrentUser,
     staleTime: 5 * 60 * 1000, // 5분
     retry: false, // 401은 재시도 안 함
   });

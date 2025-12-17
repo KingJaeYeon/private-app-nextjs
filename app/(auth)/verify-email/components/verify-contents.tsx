@@ -1,16 +1,11 @@
 'use client';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { clientAxios } from '@/lib/axios/client';
 import { useAuthStore } from '@/store/auth-store';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Spinner } from '@/components/ui/spinner';
-
-type VerifyType = {
-  email: string;
-  token: string;
-};
+import { verifyEmail } from '@/services/auth.service';
 
 export function VerifyContents({
   email,
@@ -22,17 +17,12 @@ export function VerifyContents({
   const { setUser, user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
   const { mutate } = useMutation({
-    mutationFn: async (dto: VerifyType) => {
-      const { data } = await clientAxios.post('/auth/verify-email', dto);
-      return data.data;
-    },
+    mutationFn: verifyEmail,
     onSuccess: async (data) => {
       setUser(data);
       setIsLoading(false);
     },
-    onError: async (error) => {
-      setIsLoading(false);
-    },
+    onError: async () => setIsLoading(false),
   });
 
   useLayoutEffect(() => {
@@ -64,9 +54,7 @@ export default function VerifySuccess() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push('/');
-    }, 2000);
+    const timer = setTimeout(() => router.push('/'), 2000);
 
     return () => clearTimeout(timer);
   }, [user]);
