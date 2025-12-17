@@ -1,6 +1,6 @@
 import { SearchChannelInput } from '@/app/search/components/search-channel-input';
 import { ChannelMultiFilter } from '@/app/search/components/channel-multi-filter';
-import ChannelFilterBtns from '@/app/search/components/channel-filter-btns';
+import ChannelFilterModal from '@/app/search/components/channel-filter-modal';
 
 export type SearchQuery = {
   q?: string;
@@ -26,7 +26,7 @@ export default async function SearchPage({
           <ChannelMultiFilter query={query} />
           <div className={'flex w-full gap-2'}>
             <SearchChannelInput query={query} />
-            <ChannelFilterBtns query={query} />
+            <ChannelFilterModal query={query} />
           </div>
         </div>
       </div>

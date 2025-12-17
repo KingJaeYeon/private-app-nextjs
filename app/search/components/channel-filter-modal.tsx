@@ -37,7 +37,7 @@ const SORT_OPTIONS = [
   { value: 'viewCount', label: '조회수' },
 ];
 
-export default function ChannelFilterBtns({ query }: { query: SearchQuery }) {
+export default function ChannelFilterModal({ query }: { query: SearchQuery }) {
   const [open, setOpen] = useState(false);
   const [filters, setFilters] = useState({
     uploadAt: query.uploadAt || '',
@@ -50,23 +50,32 @@ export default function ChannelFilterBtns({ query }: { query: SearchQuery }) {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const applyFilters = () => {
+  const applyUrlSync = () => {
     const params = new URLSearchParams(searchParams);
 
     // 필터 적용
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
-      } else {
+      const isDelete =
+        (value === '-1' && key === 'uploadAt') ||
+        (value === 'createdAt' && key === 'sort');
+      if (isDelete) {
         params.delete(key);
+      } else {
+        params.set(key, value);
       }
     });
 
     router.push(`/search?${params.toString()}`);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+
+    if (!open) applyUrlSync();
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
         <Button variant="outline">
           필터
@@ -79,7 +88,7 @@ export default function ChannelFilterBtns({ query }: { query: SearchQuery }) {
         <AlertDialogHeader>
           <AlertDialogTitle
             className={
-              'border-border flex items-start justify-between border-b py-4'
+              'border-border flex items-start justify-between border-b-2 py-4'
             }
           >
             필터옵션
@@ -94,7 +103,8 @@ export default function ChannelFilterBtns({ query }: { query: SearchQuery }) {
             <div className={'mb-8 flex w-full flex-col gap-4'}>
               <Label className={'font-semibold'}>테이블 정렬</Label>
               <RadioGroup
-                defaultValue={SORT_OPTIONS[0].value}
+                onValueChange={(value) => handleFilterChange('sort', value)}
+                defaultValue={filters.sort}
                 className={'grid-cols-3 gap-y-5 p-2'}
               >
                 {SORT_OPTIONS.map((option, i) => (
@@ -113,7 +123,8 @@ export default function ChannelFilterBtns({ query }: { query: SearchQuery }) {
             <div className={'mb-8 flex w-full flex-col gap-4'}>
               <Label className={'font-semibold'}>마지막 업로드일</Label>
               <RadioGroup
-                defaultValue={UPLOAD_PERIODS[0].value}
+                onValueChange={(value) => handleFilterChange('uploadAt', value)}
+                defaultValue={filters.uploadAt}
                 className={'grid-cols-3 gap-y-5 p-2'}
               >
                 {UPLOAD_PERIODS.map((option, i) => (
@@ -121,8 +132,8 @@ export default function ChannelFilterBtns({ query }: { query: SearchQuery }) {
                     className="flex w-fit items-center gap-3"
                     key={option.value}
                   >
-                    <RadioGroupItem value={option.value} id={'sort' + i} />
-                    <Label htmlFor={'sort' + i} className={'text-sm'}>
+                    <RadioGroupItem value={option.value} id={'upload' + i} />
+                    <Label htmlFor={'upload' + i} className={'text-sm'}>
                       {option.label}
                     </Label>
                   </div>
