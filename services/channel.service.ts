@@ -21,29 +21,31 @@ export type ChannelBaseResponseDto = {
 };
 
 export type ChannelSearchParams = {
-  q: string;
-  country: string;
-  subscriber: string;
-  dailyViewCount: string;
-  uploadAt: string;
-  sort: string;
+  q?: string;
+  country?: string;
+  subscriber?: string;
+  dailyViewCount?: string;
+  uploadAt?: string;
+  sort?: string;
+  userId?: string;
+  cursor?: string;
 };
 
-export const fetchChannelSuggest = async (keyword: string) => {
+export const fetchSuggestChannels = async (keyword: string) => {
   const { data } = await clientAxios.get('/channels/suggest', {
     params: { q: keyword },
   });
-  return data;
+  return data.data;
 };
 
-export const searchChannels = async (params: ChannelSearchParams) => {
-  const { data } = await clientAxios.get('/channels/search', { params });
-  return data;
+export const fetchChannels = async (params: ChannelSearchParams) => {
+  const { data } = await clientAxios.get('/channels', { params });
+  return data.data;
 };
 
 export const fetchPublicChannels = async (params?: ChannelSearchParams) => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/channels/search?${params}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/public/channels?${params}`,
     {
       next: { revalidate: 60, tags: ['public-channel'] },
     },

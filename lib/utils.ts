@@ -20,3 +20,20 @@ export function getAuthCookies(cookies: string[]) {
 
   return { newAccessToken, newRefreshToken };
 }
+
+export const toQueryString = (params: Record<string, any>) => {
+  const sp = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params ?? {})) {
+    if (value === undefined || value === null || value === '') continue;
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) continue;
+      sp.set(key, value.join(',')); // country=kr,us
+    } else {
+      sp.set(key, String(value));
+    }
+  }
+
+  return sp.toString();
+};

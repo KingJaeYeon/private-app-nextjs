@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import useDebounce from '@/hooks/use-debounce';
-import { fetchChannelSuggest } from '@/services/channel.service';
+import { fetchSuggestChannels } from '@/services/channel.service';
 
 export function useChannelSearch(initialQuery?: string) {
   const router = useRouter();
@@ -19,7 +19,7 @@ export function useChannelSearch(initialQuery?: string) {
   // 자동완성 쿼리
   const { data, isPending } = useQuery({
     queryKey: ['channels-suggest', debouncedInput],
-    queryFn: async () => fetchChannelSuggest(debouncedInput),
+    queryFn: async () => fetchSuggestChannels(debouncedInput),
     enabled: isKeyword,
   });
 
@@ -76,7 +76,7 @@ export function useChannelSearch(initialQuery?: string) {
     setInput,
     open,
     setOpen,
-    data: data?.data || [],
+    data: data || [],
     isPending,
     isKeyword,
     handleSearch,

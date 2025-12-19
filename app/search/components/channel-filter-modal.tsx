@@ -18,8 +18,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ChannelSearchParams } from '@/services/channel.service';
 
-const TAGS = ['쇼츠', '바이럴', '리뷰어', '게임', '뷰티', 'ASMR'];
-
 const UPLOAD_PERIODS = [
   { value: 'all', label: '전체' },
   { value: '7d', label: '최근 7일' },

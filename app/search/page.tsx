@@ -2,11 +2,7 @@ import { SearchChannelInput } from '@/app/search/components/search-channel-input
 import { ChannelMultiFilter } from '@/app/search/components/channel-multi-filter';
 import ChannelFilterModal from '@/app/search/components/channel-filter-modal';
 import ChannelList from '@/app/search/components/channel-list';
-import {
-  ChannelBaseResponseDto,
-  ChannelSearchParams,
-  fetchPublicChannels,
-} from '@/services/channel.service';
+import { ChannelSearchParams } from '@/services/channel.service';
 
 export default async function SearchPage({
   searchParams,
@@ -14,9 +10,6 @@ export default async function SearchPage({
   searchParams: Promise<ChannelSearchParams>;
 }) {
   const query = await searchParams;
-  const json = await fetchPublicChannels(query);
-  const data: ChannelBaseResponseDto[] = json.data;
-
   return (
     <div className="flex h-full w-full flex-1 md:pt-3">
       <div className="flex w-full flex-col gap-4">

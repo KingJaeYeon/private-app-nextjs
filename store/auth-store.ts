@@ -3,16 +3,16 @@ import { IPayload } from '@/lib/auth';
 
 interface AuthStore {
   user: IPayload | null;
+  initialized: boolean;
   isAuthenticated: boolean;
   setUser: (user: IPayload | null) => void;
   clearUser: () => void;
   initialize: (user: IPayload | null) => void;
 }
 
-let initialized = false;
-
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
+  initialized: false,
   isAuthenticated: false,
 
   setUser: (user) => set({ user, isAuthenticated: !!user }),
@@ -20,9 +20,9 @@ export const useAuthStore = create<AuthStore>((set) => ({
   clearUser: () => set({ user: null, isAuthenticated: false }),
 
   initialize: (user) => {
+    const initialized = get().initialized;
     if (!initialized) {
-      initialized = true;
-      set({ user, isAuthenticated: !!user });
+      set({ user, isAuthenticated: !!user, initialized: true });
     }
   },
 }));

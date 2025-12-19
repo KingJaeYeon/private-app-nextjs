@@ -1,7 +1,7 @@
 'use client';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React, { useEffect, useLayoutEffect, useMemo } from 'react';
+import React, { useLayoutEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ModalRenderer from '@/components/modal-renderer';
 import { IPayload } from '@/lib/auth';
@@ -42,11 +42,15 @@ export default function AppProvider({ children, user }: Props) {
     [],
   );
 
-  const { initialize } = useAuthStore();
+  const { initialize, initialized } = useAuthStore();
 
   useLayoutEffect(() => {
     initialize(user);
   }, []);
+
+  if (!initialized) {
+    return null;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
