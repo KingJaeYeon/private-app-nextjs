@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -24,6 +24,8 @@ import {
 import { Loader2, ExternalLink, Users, Eye, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ChannelSubscribeButton } from '@/components/channel/ChannelSubscribeButton';
 
 interface IChannel {
   id: number;
@@ -160,14 +162,17 @@ export default function ChannelList({ query }: { query: ChannelSearchParams }) {
           <Table>
             <TableHeader>
               <TableRow>
+                {/* bulk 선택용 전체 체크박스 (UI만) */}
+                <TableHead className="w-[40px]">
+                  <Checkbox aria-label="전체 선택" />
+                </TableHead>
                 <TableHead className="w-[200px]">채널</TableHead>
                 <TableHead>설명</TableHead>
                 <TableHead className="w-[120px]">구독자</TableHead>
                 <TableHead className="w-[120px]">일일 조회</TableHead>
                 <TableHead className="w-[150px]">마지막 업로드</TableHead>
                 <TableHead className="w-[100px]">태그</TableHead>
-                <TableHead className="w-[120px]">상태</TableHead>
-                <TableHead className="w-[100px]">액션</TableHead>
+                <TableHead className="w-[100px]">링크</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -252,7 +257,7 @@ function ChannelCard({
             </CardTitle>
             {channel.handle && (
               <CardDescription className="mt-1 text-sm">
-                @{channel.handle}
+                {channel.handle}
               </CardDescription>
             )}
           </div>
@@ -302,17 +307,21 @@ function ChannelCard({
         )}
 
         <div className="flex items-center gap-2 pt-2">
-          {channel.isSubscribed && (
-            <Badge variant="default" className="text-xs">
-              구독 중
-            </Badge>
-          )}
+          {/* bulk 선택용 체크박스 (UI만) */}
+          <Checkbox aria-label="채널 선택" />
 
+          {/* 구독(즐겨찾기) 버튼 */}
+          <ChannelSubscribeButton
+            channelId={channel.id}
+            isSubscribed={channel.isSubscribed}
+          />
+
+          {/* 채널 링크 */}
           <Link
             href={`https://www.youtube.com/channel/${channel.channelId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center"
+            className="text-primary ml-auto flex items-center text-sm"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             <span>채널 보기</span>
@@ -331,6 +340,10 @@ function ChannelTableRow({
 }) {
   return (
     <TableRow>
+      {/* 각 행 체크박스 (UI만) */}
+      <TableCell>
+        <Checkbox aria-label="채널 선택" />
+      </TableCell>
       <TableCell>
         <div className="flex items-center gap-3">
           {channel.thumbnailUrl ? (
@@ -351,7 +364,7 @@ function ChannelTableRow({
             <div className="line-clamp-1 font-medium">{channel.name}</div>
             {channel.handle && (
               <div className="text-muted-foreground text-sm">
-                @{channel.handle}
+                {channel.handle}
               </div>
             )}
           </div>
@@ -406,23 +419,16 @@ function ChannelTableRow({
           <span className="text-muted-foreground text-sm">-</span>
         )}
       </TableCell>
-      <TableCell>
-        {channel.isSubscribed && (
-          <Badge variant="default" className="text-xs">
-            구독 중
-          </Badge>
-        )}
-      </TableCell>
+      {/* 링크 컬럼 */}
       <TableCell>
         <Link
           href={`https://www.youtube.com/channel/${channel.channelId}`}
           target="_blank"
           rel="noopener noreferrer"
+          className={buttonVariants({ variant: 'outline', size: 'sm' })}
         >
-          <Button variant="outline" size="sm" className="flex items-center">
-            <ExternalLink className="mr-1 h-3 w-3" />
-            <span>보기</span>
-          </Button>
+          <ExternalLink className="mr-1 h-3 w-3" />
+          <span>보기</span>
         </Link>
       </TableCell>
     </TableRow>
