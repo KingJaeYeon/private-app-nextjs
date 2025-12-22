@@ -2,6 +2,24 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { AUTH_COOKIE } from '@/constants/auth';
 
+export type FontSize =
+  | 'text-2xs'
+  | 'text-1.5xs'
+  | 'text-xs'
+  | 'text-0.5xs'
+  | 'text-sm'
+  | 'text-base'
+  | 'text-lg'
+  | 'text-xl'
+  | 'text-2xl'
+  | 'text-3xl'
+  | 'text-4xl'
+  | 'text-5xl'
+  | 'text-6xl'
+  | 'text-7xl'
+  | 'text-8xl'
+  | 'text-9xl';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
