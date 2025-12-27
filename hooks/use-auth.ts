@@ -4,6 +4,8 @@ import { useModalStore } from '@/store/modal-store';
 import { useAuthStore } from '@/store/auth-store';
 import { useEffect } from 'react';
 import { logoutAction, signInAction } from '@/services/auth.service';
+import type { AxiosError } from 'axios';
+import type { ServerErrorResponse } from '@/lib/axios/interface';
 
 export function useAuth({
   onErrorMessage,
@@ -23,9 +25,11 @@ export function useAuth({
       closeModal();
       router.push('/');
     },
-    onError: (error: any) => {
-      const res = error.response.data;
-      onErrorMessage && onErrorMessage(res?.message);
+    onError: (error: AxiosError<ServerErrorResponse>) => {
+      const message = error.response?.data?.message;
+      if (message) {
+        onErrorMessage?.(message);
+      }
     },
   });
 

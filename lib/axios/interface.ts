@@ -7,7 +7,7 @@ export interface ServerErrorResponse {
   message: string;
   timestamp: string;
   path: string;
-  details?: any;
+  details?: unknown;
 }
 
 export type RetryRequestConfig = InternalAxiosRequestConfig & {

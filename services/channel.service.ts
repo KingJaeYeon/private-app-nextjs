@@ -31,7 +31,14 @@ export type ChannelSearchParams = {
   cursor?: string;
 };
 
-export const fetchSuggestChannels = async (keyword: string) => {
+export type ChannelSuggestItem = Pick<
+  ChannelBaseResponseDto,
+  'channelId' | 'name' | 'handle' | 'thumbnailUrl' | 'subscriberCount'
+>;
+
+export const fetchSuggestChannels = async (
+  keyword: string,
+): Promise<ChannelSuggestItem[]> => {
   const { data } = await clientAxios.get('/channels/suggest', {
     params: { q: keyword },
   });

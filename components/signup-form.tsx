@@ -21,6 +21,8 @@ import Logo from '@/public/logo.png';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 import { requestEmailVerification } from '@/services/auth.service';
+import type { AxiosError } from 'axios';
+import type { ServerErrorResponse } from '@/lib/axios/interface';
 
 const signupSchema = z
   .object({
@@ -53,9 +55,11 @@ export function SignupForm() {
   const { mutate, isPending } = useMutation({
     mutationFn: requestEmailVerification,
     onSuccess: () => setSent(true),
-    onError: (error: any) => {
-      const res = error.response.data;
-      form.setError('email', { type: 'value', message: res.message });
+    onError: (error: AxiosError<ServerErrorResponse>) => {
+      const message = error.response?.data?.message;
+      if (message) {
+        form.setError('email', { type: 'value', message });
+      }
     },
   });
 
@@ -203,9 +207,9 @@ function SuccessSendEmail({
   const { mutate, isPending } = useMutation({
     mutationFn: requestEmailVerification,
     onSuccess: () => toast('인증 메일이 재발송되었습니다'),
-    onError: (error: any) => {
+    onError: (error: AxiosError<ServerErrorResponse>) => {
       const message =
-        error?.response?.data?.message ?? '재발송 중 오류가 발생했습니다.';
+        error.response?.data?.message ?? '재발송 중 오류가 발생했습니다.';
       toast.error(message);
     },
   });

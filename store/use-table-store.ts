@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface TableStoreType {
-  triggerHeight: any;
+  triggerHeight: Record<string, number>;
   headerWidth: {
     key: string;
     width: number;
@@ -10,7 +10,7 @@ interface TableStoreType {
   resetHeaderWidth: () => void;
   getHeaderWidth: (key: string) => number;
   setTriggerHeight: (height: number, key?: string) => void;
-  getTriggerHeight: (key: string) => number;
+  getTriggerHeight: (key?: string) => number;
 }
 
 const useTableStore = create<TableStoreType>((set, get) => ({
@@ -42,7 +42,7 @@ const useTableStore = create<TableStoreType>((set, get) => ({
   },
   getTriggerHeight: (key = 'default') => {
     const { triggerHeight } = get();
-    return triggerHeight[key];
+    return triggerHeight[key] ?? 0;
   },
 }));
 

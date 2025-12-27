@@ -14,6 +14,15 @@ type Props = {
   user: IPayload | null;
 };
 
+type RetryableError = {
+  response?: {
+    status?: number;
+  };
+};
+
+const isRetryableError = (error: unknown): error is RetryableError =>
+  typeof error === 'object' && error !== null;
+
 export default function AppProvider({ children, user }: Props) {
   const queryClient = useMemo(
     () =>
@@ -22,16 +31,16 @@ export default function AppProvider({ children, user }: Props) {
           queries: {
             staleTime: 60 * 1000, // 1분
             refetchOnReconnect: true,
-            retry: (failureCount, error: any) => {
-              if (error?.response?.status === 401) {
+            retry: (failureCount, error: unknown) => {
+              if (isRetryableError(error) && error.response?.status === 401) {
                 return false;
               }
               return failureCount < 2;
             },
           },
           mutations: {
-            retry: (failureCount, error: any) => {
-              if (error?.response?.status === 401) {
+            retry: (failureCount, error: unknown) => {
+              if (isRetryableError(error) && error.response?.status === 401) {
                 return failureCount < 1;
               }
               return false;

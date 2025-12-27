@@ -13,7 +13,10 @@ import DarkLogo from '@/public/logo-dark.png';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { Spinner } from '@/components/ui/spinner';
-import { ChannelSearchParams } from '@/services/channel.service';
+import {
+  ChannelSearchParams,
+  ChannelSuggestItem,
+} from '@/services/channel.service';
 
 export function SearchChannelInput({ query }: { query: ChannelSearchParams }) {
   const {
@@ -122,7 +125,7 @@ function SearchResultsList({
   isKeyword,
   onPick,
 }: {
-  data: any[];
+  data: ChannelSuggestItem[];
   isPending: boolean;
   isKeyword: boolean;
   onPick: (id: string) => void;

@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import useDebounce from '@/hooks/use-debounce';
-import { fetchSuggestChannels } from '@/services/channel.service';
+import {
+  ChannelSearchParams,
+  fetchSuggestChannels,
+} from '@/services/channel.service';
 
 export function useChannelSearch(initialQuery?: string) {
   const router = useRouter();
@@ -24,9 +27,15 @@ export function useChannelSearch(initialQuery?: string) {
   });
 
   // 검색 실행 (Enter or 버튼)
-  const handleSearch = (currentQuery: any) => {
+  const handleSearch = (currentQuery: ChannelSearchParams = {}) => {
     const value = input.trim();
-    const params = new URLSearchParams(currentQuery);
+    const params = new URLSearchParams();
+
+    Object.entries(currentQuery ?? {}).forEach(([key, rawValue]) => {
+      if (rawValue) {
+        params.set(key, rawValue);
+      }
+    });
 
     if (!value) {
       params.delete('q');
@@ -66,7 +75,7 @@ export function useChannelSearch(initialQuery?: string) {
 
   // input 포커스 시 결과 있으면 열기
   const handleFocus = () => {
-    if ((data?.channels?.length || 0) > 0) {
+    if ((data?.length || 0) > 0) {
       setOpen(true);
     }
   };

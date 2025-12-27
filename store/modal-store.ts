@@ -18,7 +18,7 @@ export const useModalStore = create<ModalStore>((set) => ({
   isOpen: false,
   data: null,
 
-  openModal: (type: ModalType, data?: any) => {
+  openModal: <T extends ModalType>(type: T, data: IModalKey[T]['data']) => {
     set({ type, isOpen: true, data });
   },
   reOpenModal: (type: ModalType) => {

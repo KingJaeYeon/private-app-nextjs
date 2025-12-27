@@ -11,7 +11,7 @@ export default async function SearchPage({
 }) {
   const query = await searchParams;
   return (
-    <div className="flex h-full w-full flex-1 md:pt-3">
+    <div className="flex h-full w-full flex-1">
       <div className="flex w-full flex-col gap-4">
         <div className={'flex w-full flex-col gap-2'}>
           <SearchChannelInput query={query} />
@@ -20,7 +20,11 @@ export default async function SearchPage({
             <ChannelMultiFilter query={query} />
           </div>
         </div>
-        <ChannelList query={query} />
+        <div className="scrollNone relative flex flex-1 flex-col gap-4 overflow-auto">
+          <div className={'absolute h-full w-full'}>
+            <ChannelList query={query} />
+          </div>
+        </div>
       </div>
     </div>
   );

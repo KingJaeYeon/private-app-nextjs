@@ -39,7 +39,16 @@ export function getAuthCookies(cookies: string[]) {
   return { newAccessToken, newRefreshToken };
 }
 
-export const toQueryString = (params: Record<string, any>) => {
+type QueryParamValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | number[]
+  | null
+  | undefined;
+
+export const toQueryString = (params: Record<string, QueryParamValue>) => {
   const sp = new URLSearchParams();
 
   for (const [key, value] of Object.entries(params ?? {})) {
@@ -55,3 +64,28 @@ export const toQueryString = (params: Record<string, any>) => {
 
   return sp.toString();
 };
+
+// 유틸리티 함수들
+export function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`;
+  }
+  if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`;
+  }
+  return num.toString();
+}
+
+export function formatDate(date: Date | null): string {
+  if (!date) return '정보 없음';
+  const now = new Date();
+  const diff = now.getTime() - new Date(date).getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (days === 0) return '오늘';
+  if (days === 1) return '어제';
+  if (days < 7) return `${days}일 전`;
+  if (days < 30) return `${Math.floor(days / 7)}주 전`;
+  if (days < 365) return `${Math.floor(days / 30)}개월 전`;
+  return `${Math.floor(days / 365)}년 전`;
+}

@@ -10,7 +10,7 @@ const eslintConfig = defineConfig([
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
-      '@typescript-eslint/ no-explicit-any': true,
+      '@typescript-eslint/no-explicit-any': 'error',
     },
   },
   // Override default ignores of eslint-config-next.

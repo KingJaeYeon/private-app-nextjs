@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -21,13 +21,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader2, ExternalLink, Users, Eye, Calendar } from 'lucide-react';
+import { Calendar, ExternalLink, Eye, Loader2, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChannelSubscribeButton } from '@/components/channel/ChannelSubscribeButton';
+import { ChannelCard } from '@/app/search/components/channel-card';
+import { formatDate, formatNumber } from '@/lib/utils';
+import { DataTable } from '@/components/ui/data-table';
+import { CHANNELS_COLUMNS } from '@/app/search/components/channel-columns';
 
-interface IChannel {
+export interface IChannel {
   id: number;
   channelId: string;
   name: string;
@@ -35,10 +38,14 @@ interface IChannel {
   description: string | null;
   thumbnailUrl: string | null;
   subscriberCount: number;
-  viewCount: number;
   dailyViewCount: number;
+  viewCount: number;
+  regionCode: string;
+  videoCount: number;
+  publishedAt: Date;
   lastVideoUploadedAt: Date | null;
   isSubscribed: boolean;
+  link: string;
   tags?: Array<{ id: number; name: string; slug: string }>;
 }
 
@@ -61,12 +68,11 @@ export default function ChannelList({ query }: { query: ChannelSearchParams }) {
   } = useInfiniteQuery<IChannelListResponse>({
     queryKey: ['channels', query],
     queryFn: async ({ pageParam }) => {
-      const response = await fetchChannels({
+      return await fetchChannels({
         ...query,
         userId: user?.userId,
         cursor: pageParam ? String(pageParam) : undefined,
       });
-      return response;
     },
     initialPageParam: undefined,
     getNextPageParam: (lastPage, allPages) => {
@@ -149,7 +155,7 @@ export default function ChannelList({ query }: { query: ChannelSearchParams }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="h-full space-y-4">
       {/* 모바일: 카드 형태 */}
       <div className="grid gap-4 md:hidden">
         {channels.map((channel) => (
@@ -158,30 +164,37 @@ export default function ChannelList({ query }: { query: ChannelSearchParams }) {
       </div>
       {/* 데스크톱: 테이블 형태 */}
       <div className="hidden md:block">
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {/* bulk 선택용 전체 체크박스 (UI만) */}
-                <TableHead className="w-[40px]">
-                  <Checkbox aria-label="전체 선택" />
-                </TableHead>
-                <TableHead className="w-[200px]">채널</TableHead>
-                <TableHead>설명</TableHead>
-                <TableHead className="w-[120px]">구독자</TableHead>
-                <TableHead className="w-[120px]">일일 조회</TableHead>
-                <TableHead className="w-[150px]">마지막 업로드</TableHead>
-                <TableHead className="w-[100px]">태그</TableHead>
-                <TableHead className="w-[100px]">링크</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {channels.map((channel) => (
-                <ChannelTableRow key={channel.uniqueKey} channel={channel} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable
+          data={channels}
+          columns={CHANNELS_COLUMNS}
+          isFixHeader={true}
+          name={'channels'}
+        />
+
+        {/*<div className="rounded-md border">*/}
+        {/*  <Table>*/}
+        {/*    <TableHeader>*/}
+        {/*      <TableRow>*/}
+        {/*        /!* bulk 선택용 전체 체크박스 (UI만) *!/*/}
+        {/*        <TableHead className="w-[40px]">*/}
+        {/*          <Checkbox aria-label="전체 선택" />*/}
+        {/*        </TableHead>*/}
+        {/*        <TableHead className="w-[200px]">채널</TableHead>*/}
+        {/*        <TableHead>설명</TableHead>*/}
+        {/*        <TableHead className="w-[120px]">구독자</TableHead>*/}
+        {/*        <TableHead className="w-[120px]">일일 조회</TableHead>*/}
+        {/*        <TableHead className="w-[150px]">마지막 업로드</TableHead>*/}
+        {/*        <TableHead className="w-[100px]">태그</TableHead>*/}
+        {/*        <TableHead className="w-[100px]">링크</TableHead>*/}
+        {/*      </TableRow>*/}
+        {/*    </TableHeader>*/}
+        {/*    <TableBody>*/}
+        {/*      {channels.map((channel) => (*/}
+        {/*        <ChannelTableRow key={channel.uniqueKey} channel={channel} />*/}
+        {/*      ))}*/}
+        {/*    </TableBody>*/}
+        {/*  </Table>*/}
+        {/*</div>*/}
       </div>
 
       {/* 무한 스크롤 트리거 */}
@@ -199,136 +212,6 @@ export default function ChannelList({ query }: { query: ChannelSearchParams }) {
         )}
       </div>
     </div>
-  );
-}
-
-// 유틸리티 함수들
-function formatNumber(num: number): string {
-  if (num >= 1000000) {
-    return `${(num / 1000000).toFixed(1)}M`;
-  }
-  if (num >= 1000) {
-    return `${(num / 1000).toFixed(1)}K`;
-  }
-  return num.toString();
-}
-
-function formatDate(date: Date | null): string {
-  if (!date) return '정보 없음';
-  const now = new Date();
-  const diff = now.getTime() - new Date(date).getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days === 0) return '오늘';
-  if (days === 1) return '어제';
-  if (days < 7) return `${days}일 전`;
-  if (days < 30) return `${Math.floor(days / 7)}주 전`;
-  if (days < 365) return `${Math.floor(days / 30)}개월 전`;
-  return `${Math.floor(days / 365)}년 전`;
-}
-
-// 모바일용 카드 컴포넌트
-function ChannelCard({
-  channel,
-}: {
-  channel: IChannel & { uniqueKey?: string };
-}) {
-  return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
-      <CardHeader className="pb-3">
-        <div className="flex items-start gap-4">
-          {channel.thumbnailUrl ? (
-            <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
-              <Image
-                src={channel.thumbnailUrl}
-                alt={channel.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ) : (
-            <div className="bg-muted flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full">
-              <Users className="text-muted-foreground h-8 w-8" />
-            </div>
-          )}
-          <div className="min-w-0 flex-1">
-            <CardTitle className="line-clamp-1 text-lg">
-              {channel.name}
-            </CardTitle>
-            {channel.handle && (
-              <CardDescription className="mt-1 text-sm">
-                {channel.handle}
-              </CardDescription>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {channel.description && (
-          <p className="text-muted-foreground line-clamp-2 text-sm">
-            {channel.description}
-          </p>
-        )}
-
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="text-muted-foreground h-4 w-4" />
-            <span className="text-muted-foreground">구독자</span>
-            <span className="font-medium">
-              {formatNumber(channel.subscriberCount)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Eye className="text-muted-foreground h-4 w-4" />
-            <span className="text-muted-foreground">일일 조회</span>
-            <span className="font-medium">
-              {formatNumber(channel.dailyViewCount)}
-            </span>
-          </div>
-        </div>
-
-        <div className="text-muted-foreground flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4" />
-          <span>마지막 업로드: {formatDate(channel.lastVideoUploadedAt)}</span>
-        </div>
-
-        {channel.tags && channel.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {channel.tags.map((tag) => (
-              <Badge
-                key={`${channel.uniqueKey}-tag-${tag.id}`}
-                variant="secondary"
-                className="text-xs"
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        <div className="flex items-center gap-2 pt-2">
-          {/* bulk 선택용 체크박스 (UI만) */}
-          <Checkbox aria-label="채널 선택" />
-
-          {/* 구독(즐겨찾기) 버튼 */}
-          <ChannelSubscribeButton
-            channelId={channel.id}
-            isSubscribed={channel.isSubscribed}
-          />
-
-          {/* 채널 링크 */}
-          <Link
-            href={`https://www.youtube.com/channel/${channel.channelId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary ml-auto flex items-center text-sm"
-          >
-            <ExternalLink className="mr-2 h-4 w-4" />
-            <span>채널 보기</span>
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
 

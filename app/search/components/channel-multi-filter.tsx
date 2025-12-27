@@ -11,6 +11,13 @@ const COUNTRIES = [
   { value: 'GB', label: '영국' },
 ];
 
+export const countriesMap: Record<string, string> = {
+  KR: '한국',
+  US: '미국',
+  JP: '일본',
+  GB: '영국',
+};
+
 const SUBSCRIBERS = [
   { value: '10K_under', label: '~1만' },
   { value: '10K_100K', label: '1만 ~ 10만' },

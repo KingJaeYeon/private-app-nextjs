@@ -10,6 +10,7 @@ import {
   ModalType,
 } from '@/components/modals/interface';
 import { LoginModal } from '@/components/modals/login-modal';
+import type { ReactNode } from 'react';
 
 export default function ModalRenderer() {
   const { type, isOpen, closeModal, data } = useModalStore();
@@ -18,7 +19,7 @@ export default function ModalRenderer() {
     return null;
   }
 
-  const modals: Record<ModalType, any> = {
+  const modals: Record<ModalType, ReactNode> = {
     view: <ViewModal onClose={closeModal} data={data as IViewModal['data']} />,
     lightbox: (
       <LightboxModal

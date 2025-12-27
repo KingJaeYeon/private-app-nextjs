@@ -80,7 +80,11 @@ const TableRow = React.forwardRef<
 ));
 TableRow.displayName = 'TableRow';
 
-function TableHead({ className, headerKey, ...props }: any) {
+type TableHeadProps = React.ComponentProps<'th'> & {
+  headerKey?: string;
+};
+
+function TableHead({ className, headerKey, ...props }: TableHeadProps) {
   const { setHeaderWidth } = useTableStore();
   const [measureRef, { width }] = useMeasure();
 
